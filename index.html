@@ -1,4 +1,36 @@
-  var balance = 0;
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <title>ArduIOTA Wallet</title>
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <link href="https://mybcard.de/style.css" rel="stylesheet">
+    <link href="https://mybcard.de/send.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://mybcard.de/iota.min.js"></script>
+    <script type="text/javascript" src="https://mybcard.de/curl.min.js"></script>
+    <script>
+        //var iota = new IOTA({ 'host': 'https://testnet.tangle.works', 'port': 443 }); TESTNET
+        var host = (localStorage.getItem('host') != null ? localStorage.getItem('host') : 'https://n1.iota.nu')
+        var port = (localStorage.getItem('port') != null ? localStorage.getItem('port') : 443)
+        var iota = new IOTA({ 'host': host, 'port': port });
+        var seed = ""; // <<<-------
+        var balance = 0;
         var address;
         var einheit = 'Gi';
         var einheitOld = 'i';
@@ -76,19 +108,15 @@
             if (!IsSending) {
                 return new Promise(function (resolve, reject) {
                     iota.api.getAccountData(seed, function (e, accountData) {
-                        if (e !== null) {
-                            console.log(e.message);
-                        } else {
-                            console.log("Account data", accountData);
-                            if (!address && accountData.addresses[0]) {
-                                address = iota.utils.addChecksum(accountData.addresses[accountData.addresses.length - 1]);
-                                updateAddressHTML(address);
-                                addresses = accountData.addresses;
-                            }
-                            BuildTransfer(accountData.transfers);
-                            balance = accountData.balance;
-                            updateBalanceHTML(balance);
+                        console.log("Account data", accountData);
+                        if (!address && accountData.addresses[0]) {
+                            address = iota.utils.addChecksum(accountData.addresses[accountData.addresses.length - 1]);
+                            updateAddressHTML(address);
+                            addresses = accountData.addresses;
                         }
+                        BuildTransfer(accountData.transfers);
+                        balance = accountData.balance;
+                        updateBalanceHTML(balance);
                         hidePleaseWaitDiv();
                     })
                 })
@@ -265,8 +293,12 @@
             $(".modal-backdrop").remove();
             $("#pleaseWaitDialog").hide();
         }
-
-        SeedSubmit();
+        if (seed == "") {
+            alert("Seed ist nicht gesetzt");
+        }
+        else {
+            SeedSubmit();
+        }
     </script>
 </head>
 

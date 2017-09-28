@@ -1,0 +1,176 @@
+body,.modal-backdrop{
+	font-family: 'Open Sans', sans-serif;
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#407889+0,08585e+100 */
+background: #372c40   ; /* Old browsers */
+background: -moz-radial-gradient(center, ellipse cover, #372c40    0%, #033c40 100%); /* FF3.6-15 */
+background: -webkit-radial-gradient(center, ellipse cover, #372c40    0%,#033c40 100%); /* Chrome10-25,Safari5.1-6 */
+background: radial-gradient(ellipse at center, #372c40    0%,#033c40    100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#372c40   ', endColorstr='#033c40 ',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+.btn-default{
+	transition: all 0.5s ease;
+	background-color: transparent;
+	color:#fff;
+}
+.btn-default:hover{
+	color:#fff;
+	background-color: #1e4b54;
+}
+.btn-default:active,.btn-default:focus{
+    background: rgba(21, 104, 130, 0.28);
+		color:#fff;
+}
+.input-group-addon {
+    padding: 4px 12px;
+}	
+.txdatetime{
+	position: absolute;
+    bottom: 0;
+    right: 16px;
+}
+.msg{
+    font-size: 20px;
+    min-height: 26px;
+}
+.tag{
+	
+}
+.black{
+	color:#000;
+}
+#oldAddresses{
+	height:400px;
+	overflow-y:scroll;
+	margin-bottom:25px;
+}
+.list-group-item-text>a{
+    color: #fff;
+    position: absolute;
+    font-size: 18px;
+}
+header{
+background: transparent;
+ box-shadow: 5px 5px 22px 0px rgba(0,0,0,1);
+ margin-top:-1px!important;
+}
+.header__logo{
+  width: 158px;
+  margin: 25px;
+}
+.header-balance{
+  right:0;
+  position: fixed;
+  top: 0;
+}
+.mymwm{
+	margin-top: 25px;
+}
+#iotanode{
+	position: absolute;
+    right: 10px;
+	    margin-top: -10px;
+    font-size: 12px;
+}
+#customHostPortDiv{
+	margin:14px;
+}
+.row,.container-fluid{
+	margin:0;
+	padding:0;
+}
+.col-md-8,col-md-4{
+	padding:0;
+}
+#btnmenu>.btn{
+	height:200px;
+    box-shadow: 5px 5px 22px 0px rgba(0,0,0,1);
+}
+.header-balance{
+  color: #fff;
+  font-size: 36px;
+  margin: 14px;
+}
+.badge{
+  color: #fff;
+  float: right;
+  font-size: 40px;
+}
+.list-group-item{
+	color: #fff;
+background: transparent;
+}
+.list-group-item-text{
+  font-size: 14px;
+}
+#spende{
+    height: 22px;
+    color: #fff;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 10px;
+	    background: rgb(11, 31, 33);
+}
+#spende>a{
+	    color: #fff;
+}
+#transactionen{
+  height: 800px;
+  overflow-y: scroll;
+}
+#btnmenu{
+	padding-left: 14px;
+}
+#transactionen>li{
+    list-style: none;
+    box-shadow: 5px 5px 22px 0px rgba(0,0,0,1);
+    margin: 11px;
+    border-radius: 5px;
+	min-height: 194px;
+}
+.glyphicon-arrow-left,.glyphicon-arrow-right
+{
+    float: right;
+    padding: 8px;
+    font-size: 22px;
+}
+.red{
+	color:red;
+}
+.green{
+	color:green;
+}
+.bgred{
+	background:red;
+}
+.bggreen{
+	background:green;
+}
+#select_einheit{
+    width: 100px;
+    float: right;
+    margin-top: -138px;
+    margin-right: 14px;
+}
+#allAddresses{
+font-size:13px;
+}
+.modal-backdrop.show{
+opacity: 0.9!important;
+}
+#txtModal{
+	    margin: 168px;
+}
+.image {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  margin:160px 0 0 -60px;
+  -webkit-animation:spin 4s linear infinite;
+  -moz-animation:spin 4s linear infinite;
+  animation:spin 4s linear infinite;
+}
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }

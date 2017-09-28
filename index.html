@@ -5,19 +5,463 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
     <meta http-equiv="cache-control" content="max-age=0" />
     <meta http-equiv="cache-control" content="no-cache" />
     <meta http-equiv="expires" content="0" />
     <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
     <meta http-equiv="pragma" content="no-cache" />
+
     <title>ArduIOTA Seedkeeper</title>
     <link rel="shortcut icon" href="favicon.ico">
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-        crossorigin="anonymous">
-    <link href="style.css" rel="stylesheet">
-    <link href="send.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+        body,
+        .modal-backdrop {
+            font-family: 'Open Sans', sans-serif;
+            /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#407889+0,08585e+100 */
+            background: #372c40;
+            /* Old browsers */
+            background: -moz-radial-gradient(center, ellipse cover, #372c40 0%, #033c40 100%);
+            /* FF3.6-15 */
+            background: -webkit-radial-gradient(center, ellipse cover, #372c40 0%, #033c40 100%);
+            /* Chrome10-25,Safari5.1-6 */
+            background: radial-gradient(ellipse at center, #372c40 0%, #033c40 100%);
+            /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#372c40   ', endColorstr='#033c40 ', GradientType=1);
+            /* IE6-9 fallback on horizontal gradient */
+        }
+
+        .btn-default {
+            transition: all 0.5s ease;
+            background-color: transparent;
+            color: #fff;
+        }
+
+        .btn-default:hover {
+            color: #fff;
+            background-color: #1e4b54;
+        }
+
+        .btn-default:active,
+        .btn-default:focus {
+            background: rgba(21, 104, 130, 0.28);
+            color: #fff;
+        }
+
+        .input-group-addon {
+            padding: 4px 12px;
+        }
+
+        .txdatetime {
+            position: absolute;
+            bottom: 0;
+            right: 16px;
+        }
+
+        .msg {
+            font-size: 20px;
+            min-height: 26px;
+        }
+
+        .black {
+            color: #000;
+        }
+
+        #oldAddresses {
+            height: 400px;
+            overflow-y: scroll;
+            margin-bottom: 25px;
+        }
+
+        .list-group-item-text>a {
+            color: #fff;
+            position: absolute;
+            font-size: 18px;
+        }
+
+        header {
+            background: transparent;
+            box-shadow: 5px 5px 22px 0px rgba(0, 0, 0, 1);
+            margin-top: -1px!important;
+        }
+
+        .header__logo {
+            width: 158px;
+            margin: 25px;
+        }
+
+        .header-balance {
+            right: 0;
+            position: fixed;
+            top: 0;
+        }
+
+        .mymwm {
+            margin-top: 25px;
+        }
+
+        #iotanode {
+            position: absolute;
+            right: 10px;
+            margin-top: -10px;
+            font-size: 12px;
+        }
+
+        #customHostPortDiv {
+            margin: 14px;
+        }
+
+        .row,
+        .container-fluid {
+            margin: 0;
+            padding: 0;
+        }
+
+        .col-md-8,
+        col-md-4 {
+            padding: 0;
+        }
+
+        #btnmenu>.btn {
+            height: 200px;
+            box-shadow: 5px 5px 22px 0px rgba(0, 0, 0, 1);
+        }
+
+        .header-balance {
+            color: #fff;
+            font-size: 36px;
+            margin: 14px;
+        }
+
+        .badge {
+            color: #fff;
+            float: right;
+            font-size: 40px;
+        }
+
+        .list-group-item {
+            color: #fff;
+            background: transparent;
+        }
+
+        .list-group-item-text {
+            font-size: 14px;
+        }
+
+        #spende {
+            height: 22px;
+            color: #fff;
+            margin: 0 auto;
+            text-align: center;
+            margin-top: 10px;
+            background: rgb(11, 31, 33);
+        }
+
+        #spende>a {
+            color: #fff;
+        }
+
+        #transactionen {
+            height: 800px;
+            overflow-y: scroll;
+        }
+
+        #btnmenu {
+            padding-left: 14px;
+        }
+
+        #transactionen>li {
+            list-style: none;
+            box-shadow: 5px 5px 22px 0px rgba(0, 0, 0, 1);
+            margin: 11px;
+            border-radius: 5px;
+            min-height: 194px;
+        }
+
+        .glyphicon-arrow-left,
+        .glyphicon-arrow-right {
+            float: right;
+            padding: 8px;
+            font-size: 22px;
+        }
+
+        .red {
+            color: red;
+        }
+
+        .green {
+            color: green;
+        }
+
+        .bgred {
+            background: red;
+        }
+
+        .bggreen {
+            background: green;
+        }
+
+        #select_einheit {
+            width: 100px;
+            float: right;
+            margin-top: -138px;
+            margin-right: 14px;
+        }
+
+        #allAddresses {
+            font-size: 13px;
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.9!important;
+        }
+
+        #txtModal {
+            margin: 168px;
+        }
+
+        .send {
+            max-width: 800px;
+            width: 100%;
+            margin: -130px auto -180px auto;
+            border-collapse: collapse;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            top: -180px;
+        }
+
+        .send__header {
+            margin-top: -112px;
+            font-size: 38px;
+            font-weight: 100;
+            color: #fff;
+            padding: 24px;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .send__body {
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            padding: 24px;
+        }
+
+        .send__body-title {
+            font-size: 32px;
+            font-weight: 100;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            margin: 20px 0 40px;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .send__logo {
+            width: 34px;
+            height: 34px;
+            margin: 0 8px;
+        }
+
+        .send__button {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #send_waiting {
+            display: none;
+        }
+
+        .send_waiting-title {
+            font-size: 32px;
+            font-weight: 100;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            vertical-align: middle;
+            text-align: center;
+            border-bottom: 4px solid #ccc;
+        }
+        /** Loading Circle **/
+
+        #send_waiting .bokeh {
+            font-size: 100px;
+            width: 1em;
+            height: 1em;
+            position: relative;
+            margin: 70px auto;
+            border-radius: 50%;
+            border: 1px solid #dae0e5;
+            list-style: none;
+        }
+
+        #send_waiting .bokeh li {
+            position: absolute;
+            width: .2em;
+            height: .2em;
+            border-radius: 50%;
+        }
+
+        #send_waiting .bokeh li:nth-child(1) {
+            left: 50%;
+            top: 0;
+            margin: 0 0 0 -.1em;
+            background: #2ecc71;
+            -webkit-transform-origin: 50% 250%;
+            transform-origin: 50% 250%;
+            -webkit-animation: rota 1.13s linear infinite,
+            opa 3.67s ease-in-out infinite alternate;
+            animation: rota 1.13s linear infinite,
+            opa 3.67s ease-in-out infinite alternate;
+        }
+
+        #send_waiting .bokeh li:nth-child(2) {
+            top: 50%;
+            right: 0;
+            margin: -.1em 0 0 0;
+            background: #3498db;
+            -webkit-transform-origin: -150% 50%;
+            transform-origin: -150% 50%;
+            -webkit-animation: rota 1.86s linear infinite,
+            opa 4.29s ease-in-out infinite alternate;
+            animation: rota 1.86s linear infinite,
+            opa 4.29s ease-in-out infinite alternate;
+        }
+
+        #send_waiting .bokeh li:nth-child(4) {
+            top: 50%;
+            left: 0;
+            margin: -.1em 0 0 0;
+            background: #e74c3c;
+            -webkit-transform-origin: 250% 50%;
+            transform-origin: 250% 50%;
+            -webkit-animation: rota 1.72s linear infinite,
+            opa 5.25s ease-in-out infinite alternate;
+            animation: rota 1.72s linear infinite,
+            opa 5.25s ease-in-out infinite alternate;
+        }
+
+        @-webkit-keyframes rota {
+            from {}
+            to {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rota {
+            from {}
+            to {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        @-webkit-keyframes opa {
+            0% {}
+            12.0% {
+                opacity: 0.80;
+            }
+            19.5% {
+                opacity: 0.88;
+            }
+            37.2% {
+                opacity: 0.64;
+            }
+            40.5% {
+                opacity: 0.52;
+            }
+            52.7% {
+                opacity: 0.69;
+            }
+            60.2% {
+                opacity: 0.60;
+            }
+            66.6% {
+                opacity: 0.52;
+            }
+            70.0% {
+                opacity: 0.63;
+            }
+            79.9% {
+                opacity: 0.60;
+            }
+            84.2% {
+                opacity: 0.75;
+            }
+            91.0% {
+                opacity: 0.87;
+            }
+        }
+
+        @keyframes opa {
+            0% {}
+            12.0% {
+                opacity: 0.80;
+            }
+            19.5% {
+                opacity: 0.88;
+            }
+            37.2% {
+                opacity: 0.64;
+            }
+            40.5% {
+                opacity: 0.52;
+            }
+            52.7% {
+                opacity: 0.69;
+            }
+            60.2% {
+                opacity: 0.60;
+            }
+            66.6% {
+                opacity: 0.52;
+            }
+            70.0% {
+                opacity: 0.63;
+            }
+            79.9% {
+                opacity: 0.60;
+            }
+            84.2% {
+                opacity: 0.75;
+            }
+            91.0% {
+                opacity: 0.87;
+            }
+        }
+
+        .image {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            width: 120px;
+            height: 120px;
+            margin: 160px 0 0 -60px;
+            -webkit-animation: spin 4s linear infinite;
+            -moz-animation: spin 4s linear infinite;
+            animation: spin 4s linear infinite;
+        }
+
+        @-moz-keyframes spin {
+            100% {
+                -moz-transform: rotate(360deg);
+            }
+        }
+
+        @-webkit-keyframes spin {
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 
 </head>
 
@@ -28,7 +472,7 @@
             <div class="row">
 
                 <div class="header-balance">
-                    Balance: <span class="label label-default" id="iota__balance__header">0</span>
+                    Balance: <span class="label label-default" id="iotabalanceheader">0</span>
                 </div>
                 <span class="label label-default" id="iotanode"></span>
                 <div class="form-group">
@@ -59,8 +503,6 @@
                     <p class="send__header-title">Transactions</p>
                 </div>
                 <p id="transactionen"></p>
-
-
             </div>
         </section>
     </main>
@@ -70,7 +512,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title">
                         <img class="send__logo" src="https://mybcard.de/logo-black.png" /> Balance: <span class="label label-default"
-                            id="iota__balance">0</span>
+                            id="iotabalance">0</span>
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -108,8 +550,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="send__success"></div>
-                        <div id="send__waiting">
+                        <div id="send_success"></div>
+                        <div id="send_waiting">
                             <div class="row">
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"
@@ -166,7 +608,7 @@
                 </div>
                 <div class="modal-body">
                     <select class="form-control" id="select_host">
-                        <option value="http://service.iotasupport.com:14265">http://service.iotasupport.com:14265</option>
+                        <!--<option value="http://service.iotasupport.com:14265">http://service.iotasupport.com:14265</option>
                         <option value="http://eugene.iota.community:14265">http://eugene.iota.community:14265</option>
                         <option value="http://eugene.iotasupport.com:14999">http://eugene.iotasupport.com:14999</option>
                         <option value="http://eugeneoldisoft.iotasupport.com:14265">http://eugeneoldisoft.iotasupport.com:14265</option>
@@ -184,8 +626,9 @@
                         <option value="http://88.198.230.98:14265">http://88.198.230.98:14265</option>
                         <option value="http://176.9.3.149:14265">http://176.9.3.149:14265</option>
                         <option value="https://n1.iota.nu:443" selected>https://n1.iota.nu:443</option>
-                        <option value="http://node.lukaseder.de:14265">http://node.lukaseder.de:14265</option>
-                        <option value="https://node.tangle.works:443">https://node.tangle.works:443</option>
+                        <option value="http://node.lukaseder.de:14265">http://node.lukaseder.de:14265</option>-->
+                        <option value="http://node.iotawallet.info:14265" data-options='{"mwm":"14"}'>http://node.iotawallet.info:14265 - MAINNET</option>
+                        <option value="http://p101.iotaledger.net:14700" data-options='{"mwm":"9"}'>http://p101.iotaledger.net:14700 - TESTNET</option>
                         <option value="custom">custom</option>
                       </select>
                     <div class="hide row" id="customHostPortDiv">
@@ -207,6 +650,7 @@
                             <label for="customhost">MWM</label>
                             <input type="text" class="form-control" id="mwm" placeholder="">
                         </div>
+                        // Testnet 9  // Main 14
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -234,15 +678,16 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
 
-    <script type="text/javascript" src="iota.js"></script>
-    <script type="text/javascript" src="curl.min.js"></script>
+    <script type="text/javascript" src="iota.min.js"></script>
+
     <script>
+        var seed = "JWERAWBMTQWBPXMKDBLSMHPXBEH9SNLAEDNPHUMVXNTNXMFODEBHPKOHBAEGFVNICWKMMHNWBOHHRCTXI"; // <<<------- SEED
+
         var spendeaddresse = "BEDYKJPMSMKBHCMLZNSODECPNTO9TJNQHXTWVPJRBVDQDPDD9NDARDORDYOCYOZAGEQE9XTFIALNSIIPXWCBC9ESBX";
-        //var iota = new IOTA({ 'host': 'http://p101.iotaledger.net', 'port': 14700 }); TESTNET
-        var host = (localStorage.getItem('host') != null ? localStorage.getItem('host') : 'https://n1.iota.nu')
-        var port = (localStorage.getItem('port') != null ? localStorage.getItem('port') : 443)
-        var iota = new IOTA({ 'host': host, 'port': port });
-        var seed = ""; // <<<------- SEED
+        var host = (localStorage.getItem('host') != null ? localStorage.getItem('host') : 'http://node.iotawallet.info');
+        var port = (localStorage.getItem('port') != null ? localStorage.getItem('port') : 14265);
+        var mwm = (localStorage.getItem('mwm') != null ? localStorage.getItem('mwm') : 14); 
+
         var balance = 0;
         var address;
         var addressWithoutChkSum;
@@ -252,19 +697,12 @@
         var addresses;
         var IsSending = false;
         var getAccountInterval = 60; // in seconds
-        var mwm = (localStorage.getItem('mwm') != null ? localStorage.getItem('mwm') : 14); // Testnet 9  // Main 14
 
+        var iota = new IOTA({ 'host': host, 'port': port });
 
         SetHost(host, port);
-        curl.overrideAttachToTangle(iota.api);
 
-        iota.api.interruptAttachingToTangle(function (i, e) {
-            var ee = e;
-            var ii = i;
-        });
-        $(document).ready(ready);
-
-        function ready() {
+        $(document).ready(function() {
             $("#select_einheit").change(function (e) {
                 einheitOld = einheit;
                 einheit = $(this).val();
@@ -278,16 +716,18 @@
                 $("#select_einheit").val(einheit);
             });
             $("#select_host").change(function (e) {
-                var newHost = $(this).val();
-                if (newHost == "custom") {
+                if ($(this).val() == "custom") {
                     $('#customHostPortDiv').removeClass("hide");
                     $('#submitcustomhost').removeClass("hide");
                 }
                 else {
-                    var h = newHost.substring(0, newHost.lastIndexOf(":"));
-                    var p = newHost.substring(newHost.lastIndexOf(":") + 1);
+                    var h = $(this).val().substring(0, $(this).val().lastIndexOf(":"));
+                    var p = $(this).val().substring($(this).val().lastIndexOf(":") + 1);
+                    $('#mwm').val($(this).find(':selected').data('options').mwm);
+                    SetMWM();
                     SetHost(h, p);
                     $('#hostchangetext').removeClass('hide').delay(2000).fadeOut(1000);
+                    hidePleaseWaitDiv('#myModalConfig',false);
                     refresh();
                 }
             });
@@ -296,6 +736,7 @@
                 SetMWM();
                 SetHost($('#customhost').val(), $('#customport').val());
                 $('#hostchangetext').removeClass('hide').delay(2000).fadeOut(1000);
+                hidePleaseWaitDiv('#myModalConfig',false);
                 refresh();
             });
 
@@ -309,23 +750,18 @@
                 SetMWM();
             });
 
-            document.getElementById('btndonateme').innerHTML = spendeaddresse;
-
-            $('#mwm').val(mwm);
-            var myhost = host + ":" + port;
-            if ($("#select_host:contains('" + myhost + "')").length == 0) {
+            if ($("#select_host:contains('" + host + ":" + port + "')").length == 0) {
                 $("#select_host").append($('<option>', {
-                    value: myhost,
-                    text: myhost
+                    value: host + ":" + port,
+                    text: host + ":" + port
                 }));
             }
-            else {
 
-            }
-            $("#select_host").val(myhost);
-
+            $('#mwm').val(mwm);
+            $("#select_host").val(host + ":" + port);
+            document.getElementById('btndonateme').innerHTML = spendeaddresse;
             setInterval(getAccountInfo, 1000 * getAccountInterval);
-        }
+        });
 
         function SetMWM() {
             mwm = $('#mwm').val();
@@ -333,6 +769,8 @@
         }
 
         function SetHost(h, p) {
+            host = h;
+            port = p;
             iota = new IOTA({ 'host': h, 'port': p });
             localStorage.setItem('host', h);
             localStorage.setItem('port', p);
@@ -347,8 +785,8 @@
         }
 
         function updateBalanceHTML(balance) {
-            document.getElementById('iota__balance').innerHTML = iota.utils.convertUnits(balance, 'i', einheit) + einheit;
-            document.getElementById('iota__balance__header').innerHTML = iota.utils.convertUnits(balance, 'i', einheit) + einheit;
+            document.getElementById('iotabalance').innerHTML = iota.utils.convertUnits(balance, 'i', einheit) + einheit;
+            document.getElementById('iotabalanceheader').innerHTML = iota.utils.convertUnits(balance, 'i', einheit) + einheit;
         }
 
         function updateAddressHTML(address) {
@@ -378,18 +816,19 @@
             if (!IsSending) {
                 return new Promise(function (resolve, reject) {
                     iota.api.getAccountData(seed, function (e, accountData) {
-                        console.log("Account data", accountData);
-                        if (!address && accountData.addresses[0]) {
-                            address = iota.utils.addChecksum(accountData.addresses[accountData.addresses.length - 1]);
-                            updateAddressHTML(address);
-                            updateOldAddressHTML(accountData.addresses)
-                            addresses = accountData.addresses;
+                        if (!e) {
+                            console.log("Account data", accountData);
+                            if (!address && accountData.addresses != undefined && accountData.addresses[0]) {
+                                address = iota.utils.addChecksum(accountData.addresses[accountData.addresses.length - 1]);
+                                updateAddressHTML(address);
+                                updateOldAddressHTML(accountData.addresses)
+                                addresses = accountData.addresses;
+                            }
+                            BuildTransfer(accountData.transfers);
+                            balance = accountData.balance;
+                            updateBalanceHTML(balance);
+                            hidePleaseWaitDiv("#pleaseWaitDialog",true);
                         }
-
-                        BuildTransfer(accountData.transfers);
-                        balance = accountData.balance;
-                        updateBalanceHTML(balance);
-                        hidePleaseWaitDiv();
                     })
                 })
             }
@@ -467,7 +906,7 @@
 
         function sendTransfer(address, value, messageTrytes) {
             IsSending = true;
-            $('#send__waiting').show();
+            $('#send_waiting').show();
             var transfer = [{ 'address': address, 'value': parseInt(value), 'message': messageTrytes, 'tag': "ARDUIOTA9HARDWARE9WALLET" }]
             console.log("Sending Transfer", transfer);
             return new Promise(function (resolve, reject) {
@@ -475,18 +914,18 @@
                     if (e !== null) {
                         console.log(e.message);
                         var html = '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>ERROR!</strong>' + e + '.</div>'
-                        document.getElementById('send__success').innerHTML = html;
+                        document.getElementById('send_success').innerHTML = html;
                     } else {
                         console.log(r);
                         var html = '<div class="alert alert-info  alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Success!</strong> You have successfully sent your transaction. If you want to make another one make sure that this transaction is confirmed first (check in your client).</div>'
-                        document.getElementById('send__success').innerHTML = html;
+                        document.getElementById('send_success').innerHTML = html;
                         balance = balance - value;
                         updateBalanceHTML(balance);
                         getAccountInfo();
                     }
-                    $('#send__waiting').hide();
+                    $('#send_waiting').hide();
                     IsSending = false;
-                    hidePleaseWaitDiv();
+                    hidePleaseWaitDiv("#pleaseWaitDialog",true);
                 })
             })
         }
@@ -500,12 +939,12 @@
         function Submit() {
             if (!seed) {
                 var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No Seed!</strong> You have not entered your seed yet. Do so on the Menu on the right.</div>'
-                document.getElementById('send__success').innerHTML = html;
+                document.getElementById('send_success').innerHTML = html;
                 return
             }
             if (!balance || balance === 0) {
                 var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No Tokens!</strong> You do not have enough IOTA tokens. Make sure you have enough confirmed tokens.</div>'
-                document.getElementById('send__success').innerHTML = html;
+                document.getElementById('send_success').innerHTML = html;
                 return
             }
             var wert = document.getElementById('value').value;
@@ -516,17 +955,17 @@
 
             if (address == "") {
                 var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No addresse!</strong> You have no address to send.</div>'
-                document.getElementById('send__success').innerHTML = html;
+                document.getElementById('send_success').innerHTML = html;
                 return
             }
             if (!value) {
                 var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No Value!</strong> You have specified no value.</div>'
-                document.getElementById('send__success').innerHTML = html;
+                document.getElementById('send_success').innerHTML = html;
                 return
             }
             if (value > balance) {
                 var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Value too high!</strong> You have specified a too high value.</div>'
-                document.getElementById('send__success').innerHTML = html;
+                document.getElementById('send_success').innerHTML = html;
                 return
             }
             var messageToSend = { 'message': message }
@@ -534,12 +973,12 @@
                 console.log("Sending Message: ", messageToSend);
                 var messageTrytes = iota.utils.toTrytes(JSON.stringify(messageToSend));
                 console.log("Converted Message into trytes: ", messageTrytes);
-                document.getElementById('send__success').innerHTML = "";
+                document.getElementById('send_success').innerHTML = "";
                 sendTransfer(address, value, messageTrytes);
             } catch (e) {
                 console.log(e);
                 var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Wrong Format!</strong> Your message contains an illegal character. Make sure you only enter valid ASCII characters.</div>'
-                document.getElementById('send__success').innerHTML = html;
+                document.getElementById('send_success').innerHTML = html;
             }
         }
 
@@ -557,10 +996,13 @@
             }, time);
 
         }
-        function hidePleaseWaitDiv() {
-            $("#pleaseWaitDialog").removeClass("in");
-            $(".modal-backdrop").remove();
-            $("#pleaseWaitDialog").hide();
+        function hidePleaseWaitDiv(e,t) {
+            $(e).removeClass("in");
+            $(e).hide();
+            if(t)
+            {
+                $(".modal-backdrop").remove();
+            }
         }
         if (seed == "") {
             alert("Seed ist nicht gesetzt");

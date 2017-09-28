@@ -5,301 +5,20 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-    <title>ArduIOTA Wallet</title>
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <title>ArduIOTA Seedkeeper</title>
     <link rel="shortcut icon" href="favicon.ico">
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
-    <link href="https://mybcard.de/style.css" rel="stylesheet">
-    <link href="https://mybcard.de/send.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <link href="send.css" rel="stylesheet">
 
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
-
-    <script type="text/javascript" src="https://mybcard.de/iota.min.js"></script>
-    <script type="text/javascript" src="https://mybcard.de/curl.min.js"></script>
-    <script>
-        //var iota = new IOTA({ 'host': 'https://testnet.tangle.works', 'port': 443 }); TESTNET
-        var host = (localStorage.getItem('host') != null ? localStorage.getItem('host') : 'https://n1.iota.nu')
-        var port = (localStorage.getItem('port') != null ? localStorage.getItem('port') : 443)
-        var iota = new IOTA({ 'host': host, 'port': port });
-        var seed = ""; // <<<-------
-        var balance = 0;
-        var address;
-        var einheit = 'Gi';
-        var einheitOld = 'i';
-        var txtModal = "";
-        var addresses;
-        var IsSending = false;
-
-        curl.overrideAttachToTangle(iota.api);
-
-        $(document).ready(ready);
-
-        function ready() {
-            $("#select_einheit").change(function (e) {
-                einheitOld = einheit;
-                einheit = $(this).val();
-                updateBalanceHTML(balance);
-                $("#select_einheit_senden").val(einheit);
-            });
-            $("#select_einheit_senden").change(function (e) {
-                einheitOld = einheit;
-                einheit = $(this).val();
-                updateBalanceHTML(balance);
-                $("#select_einheit").val(einheit);
-            });
-            $("#select_host").change(function (e) {
-                var newHost = $(this).val();
-                if (newHost == "custom") {
-                    $('#customHostPortDiv').removeClass("hide");
-                    $('#submitcustomhost').removeClass("hide");
-                }
-                else {
-                    var h = newHost.substring(0, newHost.lastIndexOf(":"));
-                    var p = newHost.substring(newHost.lastIndexOf(":") + 1);
-                    SetHost(h, p);
-                    $('#hostchangetext').removeClass('hide').delay(2000).fadeOut(1000);
-                }
-            });
-
-            $('#submitcustomhost').click(function () {
-                SetHost($('#customhost').val(), $('#customport').val());
-                $('#hostchangetext').removeClass('hide').delay(2000).fadeOut(1000);
-            });
-
-            $('#btndonateme').click(function () {
-                $('#myModalSendIOTA').modal("show");
-                $('#address').val("BEDYKJPMSMKBHCMLZNSODECPNTO9TJNQHXTWVPJRBVDQDPDD9NDARDORDYOCYOZAGEQE9XTFIALNSIIPXWCBC9ESBX");
-                $('#message').val("Donate from ");
-            });
-        }
-
-        function SetHost(h, p) {
-            iota = new IOTA({ 'host': h, 'port': p });
-            localStorage.setItem('host', h);
-            localStorage.setItem('port', p);
-        }
-
-        function updateBalanceHTML(balance) {
-            document.getElementById('iota__balance').innerHTML = iota.utils.convertUnits(balance, 'i', einheit) + einheit;
-            document.getElementById('iota__balance__header').innerHTML = iota.utils.convertUnits(balance, 'i', einheit) + einheit;
-        }
-
-        function updateAddressHTML(address) {
-            if (!address)
-                return
-            var html = '<div class="panel panel-default"><div class="panel-heading">Address</div><div class="panel-body">' + address + '</div></div>'
-            document.getElementById('allAddresses').innerHTML = html;
-        }
-
-        function SeedSubmit() {
-            showPleaseWait('Get account...', 2000);
-            getAccountInfo();
-        }
-
-        function getAccountInfo() {
-            if (!IsSending) {
-                return new Promise(function (resolve, reject) {
-                    iota.api.getAccountData(seed, function (e, accountData) {
-                        console.log("Account data", accountData);
-                        if (!address && accountData.addresses[0]) {
-                            address = iota.utils.addChecksum(accountData.addresses[accountData.addresses.length - 1]);
-                            updateAddressHTML(address);
-                            addresses = accountData.addresses;
-                        }
-                        BuildTransfer(accountData.transfers);
-                        balance = accountData.balance;
-                        updateBalanceHTML(balance);
-                        hidePleaseWaitDiv();
-                    })
-                })
-            }
-            setInterval(getAccountInfo, 1000 * 60);
-
-        }
-
-        function BuildTransfer(transfers) {
-            transactionen.innerHTML = '<div class="list-group">';
-
-            for (var i = 0; i < transfers.length; i++) {
-                var msg = "";
-                var message = iota.utils.extractJson(transfers[i]);
-                console.log("Extracted JSON from Transaction: ", message);
-                if (message != null) {
-                    message = JSON.parse(message);
-                    console.log("JSON: ", message);
-                    msg = message.message;
-                }
-                if (transfers[i].length > 1) {
-                    var date = new Date(transfers[i][0].timestamp * 1000);
-                    transactionen.innerHTML = '<li class="list-group-item">'
-                        + '<span class="badge'
-                        + (addresses.indexOf(transfers[i][0].address) > -1 ? ' bggreen' : ' bgred')
-                        + '">' + transfers[i][0].value + '<span class="einheit">i</span></span>'
-                        + '<div class="alert alert-default" role="alert">'
-                        + (transfers[i][0].persistence == true ? '<span class="glyphicon glyphicon-ok" title="Status: Ok" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-time" title="Status: Pending" aria-hidden="true"></span>')
-                        + '</div>'
-                        + '<div class="list-group-item-text">'
-                        + '<p class="msg">'
-                        + msg
-                        + '</p>'
-                        + '<p class="tag label label-default">'
-                        + transfers[i][0].tag
-                        + '</p><br><br>'
-                        + '<a href="http://www.iota.tips/search/?kind=transaction&hash=' + transfers[i][0].hash + '" target="_blank">'
-                        + transfers[i][0].address
-                        + '</a>'
-                        + '</div>'
-                        + '<p class="txdatetime">' + date.toLocaleString() + '</p>'
-                        + '</li>'
-                        + transactionen.innerHTML;
-                }
-                else {
-                    var date = new Date(transfers[i][0].timestamp * 1000);
-                    transactionen.innerHTML = '<li class="list-group-item">'
-                        + '<div class="alert alert-default" role="alert">'
-                        + '<span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>'
-                        + '</div>'
-                        + '<div class="list-group-item-text">'
-                        + '<p class="msg">'
-                        + msg
-                        + '</p>'
-                        + '<a href="http://www.iota.tips/search/?kind=transaction&hash=' + transfers[i][0].hash + '" target="_blank">'
-                        + transfers[i][0].address
-                        + '</a>'
-                        + '</div>'
-                        + '<p class="txdatetime">' + date.toLocaleString() + '</p>'
-                        + '</li>'
-                        + transactionen.innerHTML;
-                }
-            }
-            transactionen.innerHTML += '</div>';
-        }
-
-        function genAddress() {
-            console.log("Generating an address");
-            document.getElementById("allAddresses").innerHTML = "Generating an address";
-            iota.api.getNewAddress(seed, { 'checksum': true }, function (e, address) {
-                if (!e) {
-                    console.log("NEW ADDRESS GENERATED: ", address)
-                    address = address;
-                    updateAddressHTML(address)
-                }
-            })
-        }
-
-        function sendTransfer(address, value, messageTrytes) {
-            IsSending = true;
-            $('#send__waiting').show();
-            var transfer = [{ 'address': address, 'value': parseInt(value), 'message': messageTrytes, 'tag': "ARDUIOTA9HARWARE9WALLET" }]
-            console.log("Sending Transfer", transfer);
-            return new Promise(function (resolve, reject) {
-                //iota.api.sendTransfer(seed, 5, 9, transfer, (e, r) => { TESTNET
-                iota.api.sendTransfer(seed, 5, 15, transfer, (e, r) => {
-                    if (e !== null) {
-                        console.log(e.message);
-                        var html = '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>ERROR!</strong>' + e + '.</div>'
-                        document.getElementById('send__success').innerHTML = html;
-                    } else {
-                        console.log(r);
-                        var html = '<div class="alert alert-info alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Success!</strong> You have successfully sent your transaction. If you want to make another one make sure that this transaction is confirmed first (check in your client).</div>'
-                        document.getElementById('send__success').innerHTML = html;
-                        balance = balance - value;
-                        updateBalanceHTML(balance);
-                        $('#send__waiting').hide();
-                        IsSending = false;
-                        getAccountInfo();
-                    }
-                    hidePleaseWaitDiv();
-                })
-            })
-        }
-
-        function GenAddress() {
-            if (!seed)
-                return;
-            genAddress();
-        }
-
-        function Submit() {
-            if (!seed) {
-                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No Seed!</strong> You have not entered your seed yet. Do so on the Menu on the right.</div>'
-                document.getElementById('send__success').innerHTML = html;
-                return
-            }
-            if (!balance || balance === 0) {
-                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No Tokens!</strong> You do not have enough IOTA tokens. Make sure you have enough confirmed tokens.</div>'
-                document.getElementById('send__success').innerHTML = html;
-                return
-            }
-            var wert = document.getElementById('value').value;
-            wert = iota.utils.convertUnits(wert, einheit, 'i');
-            var value = parseInt(wert);
-            var address = document.getElementById('address').value;
-            var message = document.getElementById('message').value;
-
-            if (address == "") {
-                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No addresse!</strong> You have no address to send.</div>'
-                document.getElementById('send__success').innerHTML = html;
-                return
-            }
-            if (!value) {
-                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No Value!</strong> You have specified no value.</div>'
-                document.getElementById('send__success').innerHTML = html;
-                return
-            }
-            if (value > balance) {
-                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Value too high!</strong> You have specified a too high value.</div>'
-                document.getElementById('send__success').innerHTML = html;
-                return
-            }
-            var messageToSend = { 'message': message }
-            try {
-                console.log("Sending Message: ", messageToSend);
-                var messageTrytes = iota.utils.toTrytes(JSON.stringify(messageToSend));
-                console.log("Converted Message into trytes: ", messageTrytes);
-                document.getElementById('send__success').innerHTML = "";
-                sendTransfer(address, value, messageTrytes);
-            } catch (e) {
-                console.log(e);
-                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Wrong Format!</strong> Your message contains an illegal character. Make sure you only enter valid ASCII characters.</div>'
-                document.getElementById('send__success').innerHTML = html;
-            }
-        }
-
-        function refresh() {
-            showPleaseWait('Refresh...', 100);
-            getAccountInfo();
-        }
-
-        function showPleaseWait(txt, time) {
-            setTimeout(function () {
-                $("#txtModal").text(txt);
-                $("#pleaseWaitDialog").fadeIn(1000).addClass("in");
-                $('<div class="modal-backdrop"></div>').appendTo(document.body);
-                $("#pleaseWaitDialog").show();
-            }, time);
-
-        }
-        function hidePleaseWaitDiv() {
-            $("#pleaseWaitDialog").removeClass("in");
-            $(".modal-backdrop").remove();
-            $("#pleaseWaitDialog").hide();
-        }
-        if (seed == "") {
-            alert("Seed ist nicht gesetzt");
-        }
-        else {
-            SeedSubmit();
-        }
-    </script>
 </head>
 
 <body>
@@ -311,6 +30,7 @@
                 <div class="header-balance">
                     Balance: <span class="label label-default" id="iota__balance__header">0</span>
                 </div>
+                <span class="label label-default" id="iotanode"></span>
                 <div class="form-group">
                     <select class="form-control" id="select_einheit">
                       <option value="i">i</option>
@@ -321,6 +41,9 @@
                       <option value="Pi">Pi</option>
                     </select>
                 </div>
+            </div>
+            <div class="row">
+
             </div>
         </header>
         <section class="send__section row">
@@ -422,6 +145,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="genAddress__div">
+                        <div id="oldAddresses">
+                        </div>
                         <div id="allAddresses">
                         </div>
                     </div>
@@ -477,6 +202,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mymwm">
+                        <div class="form-group">
+                            <label for="customhost">MWM</label>
+                            <input type="text" class="form-control" id="mwm" placeholder="">
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-success btn-lg btn-block hide" id="submitcustomhost">Save</button>
@@ -493,8 +224,351 @@
         <h1 id="txtModal" style="color: #fff;"></h1>
     </div>
     <div id="spende">
-        Donate IOTA: <a href="#" id="btndonateme">BEDYKJPMSMKBHCMLZNSODECPNTO9TJNQHXTWVPJRBVDQDPDD9NDARDORDYOCYOZAGEQE9XTFIALNSIIPXWCBC9ESBX</a>
+        Donate IOTA: <a href="#" id="btndonateme"></a>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="iota.js"></script>
+    <script type="text/javascript" src="curl.min.js"></script>
+    <script>
+        var spendeaddresse = "BEDYKJPMSMKBHCMLZNSODECPNTO9TJNQHXTWVPJRBVDQDPDD9NDARDORDYOCYOZAGEQE9XTFIALNSIIPXWCBC9ESBX";
+        //var iota = new IOTA({ 'host': 'http://p101.iotaledger.net', 'port': 14700 }); TESTNET
+        var host = (localStorage.getItem('host') != null ? localStorage.getItem('host') : 'https://n1.iota.nu')
+        var port = (localStorage.getItem('port') != null ? localStorage.getItem('port') : 443)
+        var iota = new IOTA({ 'host': host, 'port': port });
+        var seed = ""; // <<<------- SEED
+        var balance = 0;
+        var address;
+        var addressWithoutChkSum;
+        var einheit = 'Gi';
+        var einheitOld = 'i';
+        var txtModal = "";
+        var addresses;
+        var IsSending = false;
+        var getAccountInterval = 60; // in seconds
+        var mwm = (localStorage.getItem('mwm') != null ? localStorage.getItem('mwm') : 14); // Testnet 9  // Main 14
+
+
+        SetHost(host, port);
+        curl.overrideAttachToTangle(iota.api);
+
+        iota.api.interruptAttachingToTangle(function (i, e) {
+            var ee = e;
+            var ii = i;
+        });
+        $(document).ready(ready);
+
+        function ready() {
+            $("#select_einheit").change(function (e) {
+                einheitOld = einheit;
+                einheit = $(this).val();
+                updateBalanceHTML(balance);
+                $("#select_einheit_senden").val(einheit);
+            });
+            $("#select_einheit_senden").change(function (e) {
+                einheitOld = einheit;
+                einheit = $(this).val();
+                updateBalanceHTML(balance);
+                $("#select_einheit").val(einheit);
+            });
+            $("#select_host").change(function (e) {
+                var newHost = $(this).val();
+                if (newHost == "custom") {
+                    $('#customHostPortDiv').removeClass("hide");
+                    $('#submitcustomhost').removeClass("hide");
+                }
+                else {
+                    var h = newHost.substring(0, newHost.lastIndexOf(":"));
+                    var p = newHost.substring(newHost.lastIndexOf(":") + 1);
+                    SetHost(h, p);
+                    $('#hostchangetext').removeClass('hide').delay(2000).fadeOut(1000);
+                    refresh();
+                }
+            });
+
+            $('#submitcustomhost').click(function () {
+                SetMWM();
+                SetHost($('#customhost').val(), $('#customport').val());
+                $('#hostchangetext').removeClass('hide').delay(2000).fadeOut(1000);
+                refresh();
+            });
+
+            $('#btndonateme').click(function () {
+                $('#myModalSendIOTA').modal("show");
+                $('#address').val(spendeaddresse);
+                $('#message').val("Donate from ");
+            });
+
+            $('#mwm').keyup(function () {
+                SetMWM();
+            });
+
+            document.getElementById('btndonateme').innerHTML = spendeaddresse;
+
+            $('#mwm').val(mwm);
+            var myhost = host + ":" + port;
+            if ($("#select_host:contains('" + myhost + "')").length == 0) {
+                $("#select_host").append($('<option>', {
+                    value: myhost,
+                    text: myhost
+                }));
+            }
+            else {
+
+            }
+            $("#select_host").val(myhost);
+
+            setInterval(getAccountInfo, 1000 * getAccountInterval);
+        }
+
+        function SetMWM() {
+            mwm = $('#mwm').val();
+            localStorage.setItem('mwm', mwm);
+        }
+
+        function SetHost(h, p) {
+            iota = new IOTA({ 'host': h, 'port': p });
+            localStorage.setItem('host', h);
+            localStorage.setItem('port', p);
+            iota.api.getNodeInfo(function (e, data) {
+                if (e == undefined) {
+                    document.getElementById('iotanode').innerHTML = h + ":" + p + " - " + data.appName + " Version:" + data.appVersion;
+                }
+                else {
+                    document.getElementById('iotanode').innerHTML = e.message;
+                }
+            });
+        }
+
+        function updateBalanceHTML(balance) {
+            document.getElementById('iota__balance').innerHTML = iota.utils.convertUnits(balance, 'i', einheit) + einheit;
+            document.getElementById('iota__balance__header').innerHTML = iota.utils.convertUnits(balance, 'i', einheit) + einheit;
+        }
+
+        function updateAddressHTML(address) {
+            if (!address)
+                return
+            var html = '<div class="panel panel-default"><div class="panel-heading">Address</div><div class="panel-body">' + address + '</div></div>'
+            document.getElementById('allAddresses').innerHTML = html;
+        }
+
+        function updateOldAddressHTML(oldaddress) {
+            if (!oldaddress)
+                return
+            var html = '<ul class="list-group">'
+            oldaddress.forEach(function (element) {
+                html += '<li class="list-group-item"><span class="black">' + element + '</span></li>';
+            }, this);
+            html += '</ul>';
+            document.getElementById('oldAddresses').innerHTML = html;
+        }
+
+        function SeedSubmit() {
+            showPleaseWait('Get account from ' + host + ":" + port, 100);
+            getAccountInfo();
+        }
+
+        function getAccountInfo() {
+            if (!IsSending) {
+                return new Promise(function (resolve, reject) {
+                    iota.api.getAccountData(seed, function (e, accountData) {
+                        console.log("Account data", accountData);
+                        if (!address && accountData.addresses[0]) {
+                            address = iota.utils.addChecksum(accountData.addresses[accountData.addresses.length - 1]);
+                            updateAddressHTML(address);
+                            updateOldAddressHTML(accountData.addresses)
+                            addresses = accountData.addresses;
+                        }
+
+                        BuildTransfer(accountData.transfers);
+                        balance = accountData.balance;
+                        updateBalanceHTML(balance);
+                        hidePleaseWaitDiv();
+                    })
+                })
+            }
+        }
+
+        function BuildTransfer(transfers) {
+            transactionen.innerHTML = '<div class="list-group">';
+
+            for (var i = 0; i < transfers.length; i++) {
+                var msg = "";
+                var message = iota.utils.extractJson(transfers[i]);
+                console.log("Extracted JSON from Transaction: ", message);
+                if (message != null) {
+                    message = JSON.parse(message);
+                    console.log("JSON: ", message);
+                    msg = message.message;
+                }
+                if (transfers[i].length > 1) {
+                    var date = new Date(transfers[i][0].timestamp * 1000);
+                    transactionen.innerHTML = '<li class="list-group-item">'
+                        + '<span class="badge'
+                        + (addresses.indexOf(transfers[i][0].address) > -1 ? ' bggreen' : ' bgred')
+                        + '">' + transfers[i][0].value + '<span class="einheit">i</span></span>'
+                        + '<div class="alert alert-default" role="alert">'
+                        + (transfers[i][0].persistence == true ? '<span class="glyphicon glyphicon-ok" title="Status: Ok" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-time" title="Status: Pending" aria-hidden="true"></span>')
+                        + '</div>'
+                        + '<div class="list-group-item-text">'
+                        + '<p class="msg">'
+                        + msg
+                        + '</p>'
+                        + '<p class="tag label label-default">'
+                        + transfers[i][0].tag
+                        + '</p><br><br>'
+                        + '<a href="http://www.iota.tips/search/?kind=transaction&hash=' + transfers[i][0].hash + '" target="_blank">'
+                        + transfers[i][0].address
+                        + '</a>'
+                        + '</div>'
+                        + '<p class="txdatetime">' + date.toLocaleString() + '</p>'
+                        + '</li>'
+                        + transactionen.innerHTML;
+                }
+                else {
+                    var date = new Date(transfers[i][0].timestamp * 1000);
+                    transactionen.innerHTML = '<li class="list-group-item">'
+                        + '<div class="alert alert-default" role="alert">'
+                        + '<span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>'
+                        + '</div>'
+                        + '<div class="list-group-item-text">'
+                        + '<p class="msg">'
+                        + msg
+                        + '</p>'
+                        + '<a href="http://www.iota.tips/search/?kind=transaction&hash=' + transfers[i][0].hash + '" target="_blank">'
+                        + transfers[i][0].address
+                        + '</a>'
+                        + '</div>'
+                        + '<p class="txdatetime">' + date.toLocaleString() + '</p>'
+                        + '</li>'
+                        + transactionen.innerHTML;
+                }
+            }
+            transactionen.innerHTML += '</div>';
+        }
+
+        function genAddress() {
+            console.log("Generating an address");
+            document.getElementById("allAddresses").innerHTML = "Generating an address";
+            iota.api.getNewAddress(seed, { 'checksum': true }, function (e, address) {
+                if (!e) {
+                    console.log("NEW ADDRESS GENERATED: ", address)
+                    address = address;
+                    updateAddressHTML(address);
+                }
+            })
+        }
+
+        function sendTransfer(address, value, messageTrytes) {
+            IsSending = true;
+            $('#send__waiting').show();
+            var transfer = [{ 'address': address, 'value': parseInt(value), 'message': messageTrytes, 'tag': "ARDUIOTA9HARDWARE9WALLET" }]
+            console.log("Sending Transfer", transfer);
+            return new Promise(function (resolve, reject) {
+                iota.api.sendTransfer(seed, 5, parseInt(mwm), transfer, (e, r) => {
+                    if (e !== null) {
+                        console.log(e.message);
+                        var html = '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>ERROR!</strong>' + e + '.</div>'
+                        document.getElementById('send__success').innerHTML = html;
+                    } else {
+                        console.log(r);
+                        var html = '<div class="alert alert-info  alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Success!</strong> You have successfully sent your transaction. If you want to make another one make sure that this transaction is confirmed first (check in your client).</div>'
+                        document.getElementById('send__success').innerHTML = html;
+                        balance = balance - value;
+                        updateBalanceHTML(balance);
+                        getAccountInfo();
+                    }
+                    $('#send__waiting').hide();
+                    IsSending = false;
+                    hidePleaseWaitDiv();
+                })
+            })
+        }
+
+        function GenAddress() {
+            if (!seed)
+                return;
+            genAddress();
+        }
+
+        function Submit() {
+            if (!seed) {
+                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No Seed!</strong> You have not entered your seed yet. Do so on the Menu on the right.</div>'
+                document.getElementById('send__success').innerHTML = html;
+                return
+            }
+            if (!balance || balance === 0) {
+                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No Tokens!</strong> You do not have enough IOTA tokens. Make sure you have enough confirmed tokens.</div>'
+                document.getElementById('send__success').innerHTML = html;
+                return
+            }
+            var wert = document.getElementById('value').value;
+            wert = iota.utils.convertUnits(wert, einheit, 'i');
+            var value = parseInt(wert);
+            var address = document.getElementById('address').value;
+            var message = document.getElementById('message').value;
+
+            if (address == "") {
+                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No addresse!</strong> You have no address to send.</div>'
+                document.getElementById('send__success').innerHTML = html;
+                return
+            }
+            if (!value) {
+                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>No Value!</strong> You have specified no value.</div>'
+                document.getElementById('send__success').innerHTML = html;
+                return
+            }
+            if (value > balance) {
+                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Value too high!</strong> You have specified a too high value.</div>'
+                document.getElementById('send__success').innerHTML = html;
+                return
+            }
+            var messageToSend = { 'message': message }
+            try {
+                console.log("Sending Message: ", messageToSend);
+                var messageTrytes = iota.utils.toTrytes(JSON.stringify(messageToSend));
+                console.log("Converted Message into trytes: ", messageTrytes);
+                document.getElementById('send__success').innerHTML = "";
+                sendTransfer(address, value, messageTrytes);
+            } catch (e) {
+                console.log(e);
+                var html = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Wrong Format!</strong> Your message contains an illegal character. Make sure you only enter valid ASCII characters.</div>'
+                document.getElementById('send__success').innerHTML = html;
+            }
+        }
+
+        function refresh() {
+            showPleaseWait('Get account from ' + host + ":" + port, 100);
+            getAccountInfo();
+        }
+
+        function showPleaseWait(txt, time) {
+            setTimeout(function () {
+                $("#txtModal").text(txt);
+                $("#pleaseWaitDialog").fadeIn(1000).addClass("in");
+                $('<div class="modal-backdrop"></div>').appendTo(document.body);
+                $("#pleaseWaitDialog").show();
+            }, time);
+
+        }
+        function hidePleaseWaitDiv() {
+            $("#pleaseWaitDialog").removeClass("in");
+            $(".modal-backdrop").remove();
+            $("#pleaseWaitDialog").hide();
+        }
+        if (seed == "") {
+            alert("Seed ist nicht gesetzt");
+        }
+        else {
+            SeedSubmit();
+        }
+    </script>
 </body>
 
 </html>

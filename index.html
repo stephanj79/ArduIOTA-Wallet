@@ -16,7 +16,8 @@
     <link rel="shortcut icon" href="favicon.ico">
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
     <style>
         body,
         .modal-backdrop {
@@ -88,7 +89,7 @@
             margin-top: -1px!important;
         }
 
-        .header__logo {
+        .headerlogo {
             width: 158px;
             margin: 25px;
         }
@@ -233,7 +234,7 @@
             top: -180px;
         }
 
-        .send__header {
+        .sendheader {
             margin-top: -112px;
             font-size: 38px;
             font-weight: 100;
@@ -244,13 +245,13 @@
             text-align: center;
         }
 
-        .send__body {
+        .sendbody {
             text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
             background-color: #fff;
             padding: 24px;
         }
 
-        .send__body-title {
+        .sendbody-title {
             font-size: 32px;
             font-weight: 100;
             text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
@@ -259,13 +260,13 @@
             text-align: center;
         }
 
-        .send__logo {
+        .sendlogo {
             width: 34px;
             height: 34px;
             margin: 0 8px;
         }
 
-        .send__button {
+        .sendbutton {
             text-align: center;
             margin: 20px 0;
         }
@@ -283,152 +284,10 @@
             text-align: center;
             border-bottom: 4px solid #ccc;
         }
-        /** Loading Circle **/
 
-        #send_waiting .bokeh {
-            font-size: 100px;
-            width: 1em;
-            height: 1em;
-            position: relative;
-            margin: 70px auto;
-            border-radius: 50%;
-            border: 1px solid #dae0e5;
-            list-style: none;
-        }
-
-        #send_waiting .bokeh li {
-            position: absolute;
-            width: .2em;
-            height: .2em;
-            border-radius: 50%;
-        }
-
-        #send_waiting .bokeh li:nth-child(1) {
-            left: 50%;
-            top: 0;
-            margin: 0 0 0 -.1em;
-            background: #2ecc71;
-            -webkit-transform-origin: 50% 250%;
-            transform-origin: 50% 250%;
-            -webkit-animation: rota 1.13s linear infinite,
-            opa 3.67s ease-in-out infinite alternate;
-            animation: rota 1.13s linear infinite,
-            opa 3.67s ease-in-out infinite alternate;
-        }
-
-        #send_waiting .bokeh li:nth-child(2) {
-            top: 50%;
-            right: 0;
-            margin: -.1em 0 0 0;
-            background: #3498db;
-            -webkit-transform-origin: -150% 50%;
-            transform-origin: -150% 50%;
-            -webkit-animation: rota 1.86s linear infinite,
-            opa 4.29s ease-in-out infinite alternate;
-            animation: rota 1.86s linear infinite,
-            opa 4.29s ease-in-out infinite alternate;
-        }
-
-        #send_waiting .bokeh li:nth-child(4) {
-            top: 50%;
-            left: 0;
-            margin: -.1em 0 0 0;
-            background: #e74c3c;
-            -webkit-transform-origin: 250% 50%;
-            transform-origin: 250% 50%;
-            -webkit-animation: rota 1.72s linear infinite,
-            opa 5.25s ease-in-out infinite alternate;
-            animation: rota 1.72s linear infinite,
-            opa 5.25s ease-in-out infinite alternate;
-        }
-
-        @-webkit-keyframes rota {
-            from {}
-            to {
-                -webkit-transform: rotate(360deg);
-            }
-        }
-
-        @keyframes rota {
-            from {}
-            to {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-        }
-
-        @-webkit-keyframes opa {
-            0% {}
-            12.0% {
-                opacity: 0.80;
-            }
-            19.5% {
-                opacity: 0.88;
-            }
-            37.2% {
-                opacity: 0.64;
-            }
-            40.5% {
-                opacity: 0.52;
-            }
-            52.7% {
-                opacity: 0.69;
-            }
-            60.2% {
-                opacity: 0.60;
-            }
-            66.6% {
-                opacity: 0.52;
-            }
-            70.0% {
-                opacity: 0.63;
-            }
-            79.9% {
-                opacity: 0.60;
-            }
-            84.2% {
-                opacity: 0.75;
-            }
-            91.0% {
-                opacity: 0.87;
-            }
-        }
-
-        @keyframes opa {
-            0% {}
-            12.0% {
-                opacity: 0.80;
-            }
-            19.5% {
-                opacity: 0.88;
-            }
-            37.2% {
-                opacity: 0.64;
-            }
-            40.5% {
-                opacity: 0.52;
-            }
-            52.7% {
-                opacity: 0.69;
-            }
-            60.2% {
-                opacity: 0.60;
-            }
-            66.6% {
-                opacity: 0.52;
-            }
-            70.0% {
-                opacity: 0.63;
-            }
-            79.9% {
-                opacity: 0.60;
-            }
-            84.2% {
-                opacity: 0.75;
-            }
-            91.0% {
-                opacity: 0.87;
-            }
+        .btn-reattach{
+            float: right;
+    margin-top: -25px;
         }
 
         .image {
@@ -468,7 +327,7 @@
 <body>
     <main class="container-fluid">
         <header class="row">
-            <img class="header__logo" src="https://mybcard.de/logo.png" /><span class="brand">IOTA</span>
+            <img class="headerlogo" src="https://mybcard.de/logo.png" /><span class="brand">IOTA</span>
             <div class="row">
 
                 <div class="header-balance">
@@ -490,7 +349,7 @@
 
             </div>
         </header>
-        <section class="send__section row">
+        <section class="sendsection row">
             <div class="col-md-4" id="btnmenu">
                 <button type="button" class="btn btn-default btn-block btn-lg glyphicon glyphicon-send" data-toggle="modal" data-target="#myModalSendIOTA"></button>
                 <button type="button" class="btn btn-default btn-block btn-lg glyphicon glyphicon-list-alt" data-toggle="modal" data-target="#myModalGenerateAdress"></button>
@@ -499,8 +358,8 @@
             </div>
 
             <div class="col-md-8">
-                <div class="send__header">
-                    <p class="send__header-title">Transactions</p>
+                <div class="sendheader">
+                    <p class="sendheader-title">Transactions</p>
                 </div>
                 <p id="transactionen"></p>
             </div>
@@ -511,18 +370,17 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        <img class="send__logo" src="https://mybcard.de/logo-black.png" /> Balance: <span class="label label-default"
+                        <img class="sendlogo" src="https://mybcard.de/logo-black.png" /> Balance: <span class="label label-default"
                             id="iotabalance">0</span>
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="send__body">
+                    <div class="sendbody">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <label for="value">Value</label>
                                 <div class="input-group">
-
                                     <input type="number" class="form-control" id="value" placeholder="Value to Send">
                                     <span class="input-group-addon">
                                         <select id="select_einheit_senden">
@@ -535,7 +393,6 @@
                                         </select>
                                     </span>
                                 </div>
-                                <!-- /input-group -->
                             </div>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group">
@@ -571,7 +428,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <div class="send__button">
+                    <div class="sendbutton">
                         <button class="btn btn-success btn-lg" id="submit" onclick="Submit()">Submit</button>
                     </div>
                 </div>
@@ -650,7 +507,6 @@
                             <label for="customhost">MWM</label>
                             <input type="text" class="form-control" id="mwm" placeholder="">
                         </div>
-                        // Testnet 9  // Main 14
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -677,8 +533,6 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
-
-    <script type="text/javascript" src="iota.min.js"></script>
-
+    <script src="https://mybcard.de/iota.js"></script>
     <script>
         var seed = "

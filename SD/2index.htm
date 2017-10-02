@@ -41,7 +41,7 @@
                     var p = $(this).val().substring($(this).val().lastIndexOf(":") + 1);
                     $('#select_curNet').val($(this).find(':selected').data('options').curNet);
                     SetCurNet($(this).find(':selected').data('options').curNet);
-                    $('#mwm').val($(this).find(':selected').data('options').mwm);                    
+                    $('#mwm').val($(this).find(':selected').data('options').mwm);
                     SetMWM();
                     SetHost(h, p);
                     $('#hostchangetext').removeClass('hide').delay(2000).fadeOut(1000);
@@ -83,7 +83,6 @@
             $('#curNet').val(curNet);
             $("#select_host").val(host + ":" + port);
             document.getElementById('btndonateme').innerHTML = spendeaddresse;
-            setInterval(getAccountInfo, 1000 * getAccountInterval);
         });
         function notifyMe(t) {
             if (!("Notification" in window)) {
@@ -224,10 +223,6 @@
             html += '</ul>';
             document.getElementById('oldAddresses').innerHTML = html;
         }
-        function SeedSubmit() {
-            showPleaseWait('Get account from ' + host + ":" + port, 100);
-            getAccountInfo();
-        }
         function getAccountInfo() {
             if (!stop) {
                 iota.api.getAccountData(seed, function (e, accountData) {
@@ -247,7 +242,6 @@
                 })
             }
         }
-
         function SortTransfers(txList) {
             oldBundle = "";
             var bundleArray = new Array();
@@ -286,13 +280,14 @@
                     notifyMe("Successful AttachToTangle");
                     iota.api.broadcastTransactions(r, function (e, r) {
                         if (!e) {
+                            stop = false;
                             getAccountInfo();
+                            stop = true;
                         }
                     });
                 }
             });
         }
-        //https://testnet140.tangle.works
         function BuildTransfer(transfers) {
             transactionen.innerHTML = '<div class="list-group">';
             for (var i = 0; i < transfers.length; i++) {
@@ -497,8 +492,11 @@
             alert("Seed ist nicht gesetzt");
         }
         else {
-            SeedSubmit();
+            $(".modal-backdrop").remove();
+            showPleaseWait('Get account from ' + host + ":" + port, 100);
+            getAccountInfo();
         }
     </script>
 </body>
+
 </html>

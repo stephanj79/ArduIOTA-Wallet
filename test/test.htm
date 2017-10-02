@@ -27,14 +27,14 @@
             #btnmenu>.btn {
                 height: 90px;
                 border: none;
-                box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 1);
+                box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 1);
                 background: transparent;
                 color: #fff;
                 width: 90px;
             }
             #transactionen>li {
                 list-style: none;
-                box-shadow: 5px 5px 22px 0px rgba(0, 0, 0, 1);
+                box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 1);
                 margin: 5px;
                 border-radius: 5px;
                 min-height: 100px;
@@ -66,14 +66,15 @@
             #btnmenu>.btn {
                 height: 150px;
                 width: 150px;
-                box-shadow: 5px 5px 22px 0px rgba(0, 0, 0, 1);
+                box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 1);
             }
             #transactionen>li {
                 list-style: none;
-                box-shadow: 5px 5px 22px 0px rgba(0, 0, 0, 1);
+                box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 1);
                 margin: 11px;
                 border-radius: 5px;
                 min-height: 194px;
+                border: none;
             }
             .txdatetime {
                 position: absolute;
@@ -86,7 +87,6 @@
                 font-size: 18px;
             }
             .btn-reattach {
-
                 margin-top: -25px;
             }
         }
@@ -105,6 +105,23 @@
             /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
             filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#372c40   ', endColorstr='#033c40 ', GradientType=1);
             /* IE6-9 fallback on horizontal gradient */
+        }
+
+        .label-default {
+            background-color: rgb(55, 44, 65);
+            font-size: 14px;
+        }
+
+        .modal-content,
+        .modal-body {
+            color: #fff;
+            position: relative;
+            background-color: #083b41;
+        }
+
+        .thumbnail {
+            background-color: transparent;
+            border: none;
         }
 
         footer {
@@ -189,13 +206,6 @@
             margin-top: 25px;
         }
 
-        #iotanode {
-            position: absolute;
-            right: 10px;
-            margin-top: -10px;
-            font-size: 12px;
-        }
-
         #customHostPortDiv {
             margin: 14px;
         }
@@ -248,7 +258,7 @@
         }
 
         #transactionen {
-            height: 800px;
+            height: 621px;
             overflow-y: scroll;
         }
 
@@ -276,6 +286,11 @@
             color: green;
         }
 
+        .caption>h3 {
+            color: #fff;
+            text-align: center;
+        }
+
         .bgred {
             background: red;
         }
@@ -287,8 +302,7 @@
         #select_einheit {
             width: 100px;
             float: right;
-            margin-top: -138px;
-            margin-right: 14px;
+            margin-top: 5px;
         }
 
         #allAddresses {
@@ -301,6 +315,10 @@
 
         #txtModal {
             margin: 168px;
+        }
+
+        #iotabalanceges {
+            float: right;
         }
 
         .send {
@@ -326,7 +344,7 @@
 
         .sendbody {
             text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
+            background-color: #083b41;
             padding: 24px;
         }
 
@@ -401,20 +419,23 @@
 </head>
 
 <body>
-    <header class="row">
-        <img class="headerlogo" src="https://mybcard.de/logo.png" /><span class="brand">IOTA</span>
+    <header class="container-fluid">
+
         <div class="row">
-            <div class="header-balance">
-                Balance: <span class="label label-default" id="iotabalanceheader">0</span>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <span class="label label-default" id="iotanode"></span>
             </div>
-            <div class="header-usd">
-                USD: <span class="label label-default" id="iotabalanceusd">0</span>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="thumbnail">
+                    <img class="headerlogo" src="https://mybcard.de/logo.png" />
+                    <div class="caption">
+                        <h3><span class="brand">Balance</span><br><span class="" id="iotabalanceheader">0</span></h3>
+                        <span class="label label-default" id="iotabalanceusd">0</span>
+                        <span class="label label-default" id="iotabalanceges">0</span>
+                    </div>
+                </div>
             </div>
-            <div class="header-ges">
-                USD: <span class="label label-default" id="iotabalanceges">0</span>
-            </div>
-            <span class="label label-default" id="iotanode"></span>
-            <div class="form-group">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                 <select class="form-control" id="select_einheit">
                     <option value="i">i</option>
                     <option value="Ki">Ki</option>
@@ -425,9 +446,8 @@
                 </select>
             </div>
         </div>
-        <div class="row">
-        </div>
     </header>
+
     <main class="container-fluid">
         <section class="sendsection row">
             <div class="col-md-1" id="btnmenu">
@@ -437,9 +457,6 @@
                 <button type="button" class="btn btn-default btn-block glyphicon glyphicon-refresh" onclick="refresh()"></button>
             </div>
             <div class="col-md-11">
-                <div class="sendheader">
-                    <p class="sendheader-title">Transactions</p>
-                </div>
                 <p id="transactionen"></p>
             </div>
         </section>
@@ -543,26 +560,27 @@
                 </div>
                 <div class="modal-body">
                     <select class="form-control" id="select_host">
-                        <!--<option value="http://service.iotasupport.com:14265">http://service.iotasupport.com:14265</option>
-                        <option value="http://eugene.iota.community:14265">http://eugene.iota.community:14265</option>
-                        <option value="http://eugene.iotasupport.com:14999">http://eugene.iotasupport.com:14999</option>
-                        <option value="http://eugeneoldisoft.iotasupport.com:14265">http://eugeneoldisoft.iotasupport.com:14265</option>
-                        <option value="http://node01.iotatoken.nl:14265">http://node01.iotatoken.nl:14265</option>
-                        <option value="http://node02.iotatoken.nl:14265">http://node02.iotatoken.nl:14265</option>
-                        <option value="http://node03.iotatoken.nl:15265">http://node03.iotatoken.nl:15265</option>
-                        <option value="http://node.deviceproof.org:1426">http://node.deviceproof.org:1426</option>
-                        <option value="http://mainnet.necropaz.com:14500">http://mainnet.necropaz.com:14500</option>
-                        <option value="http://5.9.149.169:14265">http://5.9.149.169:14265</option>
-                        <option value="http://iota.digits.blue:14265">http://iota.digits.blue:14265</option>
-                        <option value="http://wallets.iotamexico.com:80">http://wallets.iotamexico.com:80</option>
-                        <option value="http://5.9.137.199:14265">http://5.9.137.199:14265</option>
-                        <option value="http://5.9.118.112:14265">http://5.9.118.112:14265</option>
-                        <option value="http://5.9.149.169:14265">http://5.9.149.169:14265</option>
-                        <option value="http://88.198.230.98:14265">http://88.198.230.98:14265</option>
-                        <option value="http://176.9.3.149:14265">http://176.9.3.149:14265</option>
-                        <option value="https://n1.iota.nu:443" selected>https://n1.iota.nu:443</option>
-                        <option value="http://node.lukaseder.de:14265">http://node.lukaseder.de:14265</option>-->
+                       <!-- <option value="http://service.iotasupport.com:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://service.iotasupport.com:14265</option>
+                        <option value="http://eugene.iota.community:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://eugene.iota.community:14265</option>
+                        <option value="http://eugene.iotasupport.com:14999" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://eugene.iotasupport.com:14999</option>
+                        <option value="http://eugeneoldisoft.iotasupport.com:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://eugeneoldisoft.iotasupport.com:14265</option>
+                        <option value="http://node01.iotatoken.nl:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://node01.iotatoken.nl:14265</option>
+                        <option value="http://node02.iotatoken.nl:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://node02.iotatoken.nl:14265</option>
+                        <option value="http://node03.iotatoken.nl:15265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://node03.iotatoken.nl:15265</option>
+                        <option value="http://node.deviceproof.org:1426" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://node.deviceproof.org:1426</option>
+                        <option value="http://mainnet.necropaz.com:14500" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://mainnet.necropaz.com:14500</option>
+                        <option value="http://5.9.149.169:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://5.9.149.169:14265</option>
+                        <option value="http://iota.digits.blue:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://iota.digits.blue:14265</option>
+                        <option value="http://wallets.iotamexico.com:80" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://wallets.iotamexico.com:80</option>
+                        <option value="http://5.9.137.199:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://5.9.137.199:14265</option>
+                        <option value="http://5.9.118.112:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://5.9.118.112:14265</option>
+                        <option value="http://5.9.149.169:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://5.9.149.169:14265</option>
+                        <option value="http://88.198.230.98:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://88.198.230.98:14265</option>
+                        <option value="http://176.9.3.149:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://176.9.3.149:14265</option>
+                        <option value="https://n1.iota.nu:443"  data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>https://n1.iota.nu:443</option>
+                        <option value="http://node.lukaseder.de:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://node.lukaseder.de:14265</option>-->
                         <option value="http://node.iotawallet.info:14265" data-options='{"mwm":"14" ,"curNet": "Mainnet"}'>http://node.iotawallet.info:14265 - MAINNET</option>
+                        <option value="https://testnet140.tangle.works:443" data-options='{"mwm":"9" ,"curNet": "Testnet"}'>https://testnet140.tangle.works:443 - TESTNET</option>
                         <option value="http://p101.iotaledger.net:14700" data-options='{"mwm":"9" ,"curNet": "Testnet"}'>http://p101.iotaledger.net:14700 - TESTNET</option>
                         <option value="custom">custom</option>
                       </select>
@@ -614,7 +632,7 @@
             Donate IOTA: <a href="#" id="btndonateme"></a>
         </div>
     </footer>
-
+    <div class="modal-backdrop"></div>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
@@ -622,7 +640,78 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
     <script src="https://mybcard.de/iota.js"></script>
-    <script src="http://iotatoken.io/js/bf.js"></script>
+    <script>
+        (function (w) {
+            'use strict';
+
+            function Price(symbol, cb) {
+                var self = this;
+                var callback = cb;
+                var openConnection = function (msgcb) {
+                    var ws = new WebSocket('wss://api.bitfinex.com/ws/2');
+                    var running = true;
+
+                    ws.onopen = function (e) {
+                        var msg_subsc = JSON.stringify({
+                            "event": "subscribe",
+                            "channel": "ticker",
+                            "symbol": symbol
+                        });
+                        ws.send(msg_subsc);
+                    };
+                    ws.onclose = function (e) {
+                        setTimeout(openConnection, 5000, msgcb);
+                    };
+                    ws.onmessage = function (e) {
+                        var data = JSON.parse(e.data);
+
+                        if (data.hasOwnProperty('event')) {
+                            if (data.event == 'info' && data.hasOwnProperty('code')) {
+                                switch (parseInt(data.code)) {
+                                    case 20051: ws.close(0, 0); break;
+                                    case 20060: running = false; break;
+                                    case 20061: running = true; break;
+                                }
+                            }
+                            if (data.event == 'error') {
+                                // var errno = data.code;
+                                // var errmsg = data.msg;
+                                ws.close(3001, 3001);
+                            }
+                            if (data.hasOwnProperty('subscribed')) {
+                                ws.chanId = data.chanId;
+                            }
+                            return;
+                        }
+                        if (running)
+                            msgcb(data);
+                    }
+                    return ws;
+                };
+                var messageCallback = function (data) {
+                    if (Array.isArray(data) && Array.isArray(data[1])) {
+                        callback(data[1][6]);
+                    }
+                };
+                this.wss = openConnection(messageCallback);
+
+                w.addEventListener('beforeunload', function (e) {
+                    self.wss.close();
+                });
+            }
+
+            Price.prototype.close = function () {
+                var msg_unsubsc = JSON.stringify({
+                    "event": "unsubscribe",
+                    "chanId": this.wss.chanId
+                });
+                this.wss.send(msg_unsubsc);
+            }
+
+            w.Price = Price;
+
+        }(window || {}))
+    </script>
     <script>
         var seed = ""; // <<<------- SEED
         var spendeaddresse = "BEDYKJPMSMKBHCMLZNSODECPNTO9TJNQHXTWVPJRBVDQDPDD9NDARDORDYOCYOZAGEQE9XTFIALNSIIPXWCBC9ESBX";
@@ -667,7 +756,7 @@
                     var p = $(this).val().substring($(this).val().lastIndexOf(":") + 1);
                     $('#select_curNet').val($(this).find(':selected').data('options').curNet);
                     SetCurNet($(this).find(':selected').data('options').curNet);
-                    $('#mwm').val($(this).find(':selected').data('options').mwm);                    
+                    $('#mwm').val($(this).find(':selected').data('options').mwm);
                     SetMWM();
                     SetHost(h, p);
                     $('#hostchangetext').removeClass('hide').delay(2000).fadeOut(1000);
@@ -709,7 +798,6 @@
             $('#curNet').val(curNet);
             $("#select_host").val(host + ":" + port);
             document.getElementById('btndonateme').innerHTML = spendeaddresse;
-            setInterval(getAccountInfo, 1000 * getAccountInterval);
         });
         function notifyMe(t) {
             if (!("Notification" in window)) {
@@ -850,10 +938,6 @@
             html += '</ul>';
             document.getElementById('oldAddresses').innerHTML = html;
         }
-        function SeedSubmit() {
-            showPleaseWait('Get account from ' + host + ":" + port, 100);
-            getAccountInfo();
-        }
         function getAccountInfo() {
             if (!stop) {
                 iota.api.getAccountData(seed, function (e, accountData) {
@@ -873,7 +957,6 @@
                 })
             }
         }
-
         function SortTransfers(txList) {
             oldBundle = "";
             var bundleArray = new Array();
@@ -912,13 +995,14 @@
                     notifyMe("Successful AttachToTangle");
                     iota.api.broadcastTransactions(r, function (e, r) {
                         if (!e) {
+                            stop = false;
                             getAccountInfo();
+                            stop = true;
                         }
                     });
                 }
             });
         }
-        //https://testnet140.tangle.works
         function BuildTransfer(transfers) {
             transactionen.innerHTML = '<div class="list-group">';
             for (var i = 0; i < transfers.length; i++) {
@@ -1123,8 +1207,11 @@
             alert("Seed ist nicht gesetzt");
         }
         else {
-            SeedSubmit();
+            $(".modal-backdrop").remove();
+            showPleaseWait('Get account from ' + host + ":" + port, 100);
+            getAccountInfo();
         }
     </script>
 </body>
+
 </html>
